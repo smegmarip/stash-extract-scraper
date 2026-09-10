@@ -31,9 +31,16 @@ sceneByQueryFragment:
 # wildcards). Keep patterns narrow: a catch-all like "http" claims every
 # URL and shadows every other installed scraper.
 #
+# Patterns must also survive the Settings UI, which renders each one via
+# `new URL("https://" + pattern)` with no error handling: a pattern that
+# starts with "#" or ":" (empty host) throws and blanks the whole
+# Metadata Providers page. So the delimiter prefixes are dropped here and
+# the bare substrings still match the same URLs.
+#
 # The defaults cover the two URL shapes only this scraper understands:
-#   "#sx="            bridge-stamped record id, written back on scrape apply
-#   ":13100/records/" viewer deep-link (match the port to VIEWER_PORT if
+#   "sx="             bridge-stamped record id (the "#sx=" fragment),
+#                     written back on scrape apply
+#   "13100/records/"  viewer deep-link (match the port to VIEWER_PORT if
 #                     you changed it from the compose default)
 #
 # To also route source-page URLs through the bridge's /match/url matching,
@@ -42,8 +49,8 @@ sceneByQueryFragment:
 sceneByURL:
   - action: script
     url:
-      - "#sx="
-      - ":13100/records/"
+      - "sx="
+      - "13100/records/"
     script:
       - python3
       - scraper.py
